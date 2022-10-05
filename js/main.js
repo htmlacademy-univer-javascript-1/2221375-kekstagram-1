@@ -1,22 +1,11 @@
-const getRandomPositiveInt = (left, right) => {
-  if (left === right){
-    return left;
-  }
-  if (right < left) {
-    left = left + right;
-    right = left - right;
-    left = left - right;
-  }
-  return Math.floor(Math.random() * (right - left + 1) + left);
+const getRandomPositiveInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
+  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
 };
 
-const checkMaxLenght = (testableStr, maxLenght) => {
-  if (typeof testableStr !== 'string') {
-    testableStr = String(testableStr);
-  }
-  return testableStr.Lenght <= maxLenght;
-};
+const checkStringLength = (string, length) => string.length <= length;
 
-getRandomPositiveInt(1, 3);
-checkMaxLenght(1, 3);
-
+getRandomPositiveInteger(1, 3);
+checkStringLength('aasddd', 10);
