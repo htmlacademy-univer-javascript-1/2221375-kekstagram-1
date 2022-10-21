@@ -36,7 +36,7 @@ const createPhoto = (id) => ({
 });
 
 const createArrayPhotos = () => {
-  const photo  = Array.from({length: 25});
+  const photo = Array.from({length: 25});
   return photo.map((element, index) => createPhoto(index + 1));
 };
 
