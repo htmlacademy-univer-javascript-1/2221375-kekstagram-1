@@ -1,3 +1,6 @@
-import {createArrayPhotos} from './data.js';
+import { createPhotos } from './data.js';
+import { getThumbnailTemplate } from './thumbnails.js';
 
-createArrayPhotos();
+const data = createPhotos();
+
+getThumbnailTemplate(data);
