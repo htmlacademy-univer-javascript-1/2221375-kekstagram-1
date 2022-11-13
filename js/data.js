@@ -1,20 +1,5 @@
 import {getRandomPositiveInteger} from './utils.js';
-
-const NAMES = ['Глеб Голубин', 'Гончаров Илья', 'Владимиров Николай', 'Щербаков Иван', 'Климов Роман', 'Самсонов Даниэль', 'Федоров Роман', 'Ефремов Даниил', 'Старостин Максим'];
-
-const MESSAGES = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-
-const DESCRIPTION = ['Улыбка на миллион','Хорошее фото','Коммутатор'];
-
-const AvatarNumber = {
-  MIN: 1,
-  MAX: 6
-};
-
-const CountLike  = {
-  MIN: 15,
-  MAX: 200
-};
+import { NAMES, MESSAGES, DESCRIPTION, AvatarNumber, CountLike, CountComment, MAX_COUNT_PHOTOS } from './consts.js';
 
 const createComment = (id) => ({
   id,
@@ -23,7 +8,7 @@ const createComment = (id) => ({
   name: NAMES[getRandomPositiveInteger(0, NAMES.length - 1)]
 });
 
-const createCommentsArray = () => Array.from({length: 3}, (_, index) => createComment(index + 1));
+const createCommentsArray = () => Array.from({length: getRandomPositiveInteger(CountComment.MIN, CountComment.MAX)}, (_, index) => createComment(index + 1));
 
 const createPhoto = (id) => ({
   id,
@@ -33,6 +18,6 @@ const createPhoto = (id) => ({
   comments: createCommentsArray(),
 });
 
-const createPhotos = () => Array.from({length: 25}, (_, index) => createPhoto(index + 1));
+const createPhotos = () => Array.from({length: MAX_COUNT_PHOTOS}, (_, index) => createPhoto(index + 1));
 
 export {createPhotos};
