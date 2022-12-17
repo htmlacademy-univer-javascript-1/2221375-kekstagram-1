@@ -1,5 +1,7 @@
 import { isEscapeKey, checkStringLength } from './utils.js';
 import { MAX_STRING_LENGTH, MAX_COUNT_HASHTAG, MAX_HASHTAG_LENGTH, MessageError } from './consts.js';
+import { onScaleButtonClick, scaleContainer } from './image-scale.js';
+import { onFilterButtonChange, effectList, sliderWrapper } from './filters.js';
 
 const body = document.querySelector('body');
 const submitButton = document.querySelector('.img-upload__submit');
@@ -9,6 +11,7 @@ const form = document.querySelector('.img-upload__form');
 const closeButton = form.querySelector('.img-upload__cancel');
 const hashtagsField = form.querySelector('.text__hashtags');
 const commentsField = form.querySelector('.text__description');
+const imgPreview = document.querySelector('.img-upload__preview').querySelector('img');
 
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
@@ -19,6 +22,10 @@ const pristine = new Pristine(form, {
 const closeUploadPopup  = () => {
   editImg.classList.add('hidden');
   body.classList.remove('modal-open');
+  scaleContainer.removeEventListener('click', onScaleButtonClick);
+  imgPreview.removeAttribute('class');
+  imgPreview.removeAttribute('style');
+  effectList.removeEventListener('change', onFilterButtonChange);
   form.reset();
 };
 
@@ -52,6 +59,9 @@ const onImgUploadFieldchange = () => {
   body.classList.add('modal-open');
   closeButton.addEventListener('click', onCloseButtonClick);
   document.addEventListener('keydown',onButtonEscKeydown);
+  scaleContainer.addEventListener('click', onScaleButtonClick);
+  effectList.addEventListener('change', onFilterButtonChange);
+  sliderWrapper.classList.add('hidden');
   addFieldListeners(commentsField);
   addFieldListeners(hashtagsField);
   buttonAdjustment();
@@ -165,4 +175,4 @@ const renderUploadForm = () => {
   validateForm();
 };
 
-export { renderUploadForm };
+export { renderUploadForm, imgPreview };
