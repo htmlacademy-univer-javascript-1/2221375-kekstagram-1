@@ -1,7 +1,9 @@
 import { isEscapeKey, checkStringLength } from './utils.js';
 import { MAX_STRING_LENGTH, MAX_COUNT_HASHTAG, MAX_HASHTAG_LENGTH, MessageError } from './consts.js';
 import { onScaleButtonClick, scaleContainer } from './image-scale.js';
-import { onFilterButtonChange, effectList, sliderWrapper } from './filters.js';
+import { onFilterButtonChange, effectList, sliderWrapper, initEffects } from './filters.js';
+import { sendData } from './api.js';
+import { renderMessage } from './messages.js';
 
 const body = document.querySelector('body');
 const submitButton = document.querySelector('.img-upload__submit');
@@ -19,25 +21,31 @@ const pristine = new Pristine(form, {
   errorTextClass: 'img-upload__error-text'
 });
 
-const closeUploadPopup  = () => {
+const closeForm  = () => {
   editImg.classList.add('hidden');
   body.classList.remove('modal-open');
   scaleContainer.removeEventListener('click', onScaleButtonClick);
   imgPreview.removeAttribute('class');
   imgPreview.removeAttribute('style');
   effectList.removeEventListener('change', onFilterButtonChange);
+};
+
+const closeFormWithDefaultSettings  = () => {
+  closeForm();
+  imgPreview.removeAttribute('class');
+  imgPreview.removeAttribute('style');
   form.reset();
 };
 
 const onButtonEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
-    closeUploadPopup();
+    closeFormWithDefaultSettings();
     document.removeEventListener('keydown', onButtonEscKeydown);
   }
 };
 
 const onCloseButtonClick = () => {
-  closeUploadPopup();
+  closeFormWithDefaultSettings();
   document.removeEventListener('keydown', onButtonEscKeydown);
 };
 
@@ -54,14 +62,16 @@ const buttonAdjustment = () => {
   submitButton.disabled = !pristine.validate();
 };
 
+const doActionWithClassHidden = () => imgPreview.hasAttribute('class') ? sliderWrapper.classList.remove('hidden') : sliderWrapper.classList.add('hidden');
+
 const onImgUploadFieldchange = () => {
   editImg.classList.remove('hidden');
   body.classList.add('modal-open');
   closeButton.addEventListener('click', onCloseButtonClick);
   document.addEventListener('keydown',onButtonEscKeydown);
+  doActionWithClassHidden();
   scaleContainer.addEventListener('click', onScaleButtonClick);
   effectList.addEventListener('change', onFilterButtonChange);
-  sliderWrapper.classList.add('hidden');
   addFieldListeners(commentsField);
   addFieldListeners(hashtagsField);
   buttonAdjustment();
@@ -168,11 +178,31 @@ const onHashtagInput = () => buttonAdjustment();
 
 const onCommentInput = () => buttonAdjustment();
 
+const setFormSubmit = (onSuccess, onError) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    submitButton.disabled = true;
+    sendData(
+      () => {
+        onSuccess();
+        renderMessage(true);
+      },
+      () => {
+        onError();
+        renderMessage();
+      },
+      new FormData(evt.target),
+    );
+  });
+};
+
 const renderUploadForm = () => {
   imgUploadField.addEventListener('change', onImgUploadFieldchange);
   hashtagsField.addEventListener('input', onHashtagInput);
   commentsField.addEventListener('input', onCommentInput);
+  initEffects();
   validateForm();
+  setFormSubmit(closeFormWithDefaultSettings, closeForm);
 };
 
 export { renderUploadForm, imgPreview };

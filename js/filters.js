@@ -5,7 +5,7 @@ const sliderWrapper = document.querySelector('.effect-level');
 const effectValue = document.querySelector('.effect-level__value');
 const effectList = document.querySelector('.effects__list');
 
-const Effects = {
+const Effect = {
   none: {
     filter: 'none',
     unit: '',
@@ -105,7 +105,7 @@ const onFilterButtonChange = (evt) => {
   const evtHandler = evt.target.value;
   if (evtHandler === 'none') {
     sliderWrapper.classList.add('hidden');
-    imgPreview.style.filter = Effects[evtHandler].filter;
+    imgPreview.style.filter = Effect[evtHandler].filter;
     imgPreview.removeAttribute('class');
   }
 
@@ -113,10 +113,10 @@ const onFilterButtonChange = (evt) => {
     sliderWrapper.classList.remove('hidden');
     imgPreview.removeAttribute('class');
     imgPreview.classList.add(`effects__preview--${evtHandler}`);
-    slider.noUiSlider.updateOptions(Effects[evtHandler].options);
+    slider.noUiSlider.updateOptions(Effect[evtHandler].options);
     slider.noUiSlider.on('update', () => {
       effectValue.value = slider.noUiSlider.get();
-      imgPreview.style.filter = `${Effects[evtHandler].filter}(${effectValue.value}${Effects[evtHandler].units})`;
+      imgPreview.style.filter = `${Effect[evtHandler].filter}(${effectValue.value}${Effect[evtHandler].units})`;
     });
   }
 };
