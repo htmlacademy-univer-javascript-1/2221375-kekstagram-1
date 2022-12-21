@@ -1,7 +1,7 @@
 import { isEscapeKey, checkStringLength } from './utils.js';
 import { MAX_STRING_LENGTH, MAX_COUNT_HASHTAG, MAX_HASHTAG_LENGTH, MessageError } from './consts.js';
 import { onScaleButtonClick, scaleContainer } from './image-scale.js';
-import { onFilterButtonChange, effectList, sliderWrapper, initEffects } from './filters.js';
+import { onFilterButtonChange, effectList, sliderWrapper, initEffects } from './effect-filters.js';
 import { sendData } from './api.js';
 import { renderMessage } from './messages.js';
 
