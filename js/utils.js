@@ -1,18 +1,10 @@
-import { TIMEOUT_DELAY } from './consts.js';
-
-const getRandomPositiveInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-
-  return Math.floor(result);
-};
+import { TIMEOUT_DELAY, ALERT_SHOW_TIME } from './consts.js';
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const checkStringLength = (string, length) => string.length <= length;
 
-const showAlert = (message, alertShowTime) => {
+const showAlert = () => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = '100';
   alertContainer.style.position = 'absolute';
@@ -23,12 +15,11 @@ const showAlert = (message, alertShowTime) => {
   alertContainer.style.fontSize = '30px';
   alertContainer.style.textAlign = 'center';
   alertContainer.style.backgroundColor = 'red';
-
-  alertContainer.textContent = message;
+  alertContainer.textContent = 'Не удалось загрузить фотографии';
 
   document.body.append(alertContainer);
 
-  setTimeout(() => alertContainer.remove(), alertShowTime);
+  setTimeout(() => alertContainer.remove(), ALERT_SHOW_TIME );
 };
 
 const shuffleArray = (arr) => arr.map((a) => [Math.random(), a]).sort((a, b) => a[0] - b[0]).map((a) => a[1]);
@@ -43,17 +34,4 @@ const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) => {
   };
 };
 
-const throttle = (callback, delayBetweenFrames) => {
-  let lastTime = 0;
-
-  return (...rest) => {
-    const now = new Date();
-
-    if (now - lastTime >= delayBetweenFrames) {
-      callback.apply(this, rest);
-      lastTime = now;
-    }
-  };
-};
-
-export { getRandomPositiveInteger, isEscapeKey, checkStringLength, showAlert, debounce, throttle, shuffleArray };
+export { isEscapeKey, checkStringLength, showAlert, debounce, shuffleArray };

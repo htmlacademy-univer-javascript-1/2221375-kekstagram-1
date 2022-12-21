@@ -20,7 +20,6 @@ const onPicturesClick = (evt) => {
   if ( picture ) {
     const id = picture.dataset.id;
     const [ photo ] = photos.filter((element) => element.id === +id);
-
     openBigPicture(photo);
   }
 };
