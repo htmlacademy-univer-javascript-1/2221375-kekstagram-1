@@ -1,3 +1,5 @@
+import { TIMEOUT_DELAY } from './consts.js';
+
 const getRandomPositiveInteger = (a, b) => {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
   const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
@@ -29,4 +31,29 @@ const showAlert = (message, alertShowTime) => {
   setTimeout(() => alertContainer.remove(), alertShowTime);
 };
 
-export { getRandomPositiveInteger, isEscapeKey, checkStringLength, showAlert };
+const shuffleArray = (arr) => arr.map((a) => [Math.random(), a]).sort((a, b) => a[0] - b[0]).map((a) => a[1]);
+
+const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+const throttle = (callback, delayBetweenFrames) => {
+  let lastTime = 0;
+
+  return (...rest) => {
+    const now = new Date();
+
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
+};
+
+export { getRandomPositiveInteger, isEscapeKey, checkStringLength, showAlert, debounce, throttle, shuffleArray };

@@ -27,10 +27,15 @@ const onPicturesClick = (evt) => {
 
 const createThumbnails = () => picturesContainer.insertAdjacentHTML('afterbegin', photos.map((photo) => getThumbnailTemplate(photo)).join(''));
 
+const removeThumbnails = () => {
+  const pictures = document.querySelectorAll('.js-picture');
+  pictures.forEach((picture) => picture.remove());
+};
+
 const initThumbnails = (data) => {
   photos = data.slice();
   createThumbnails();
   picturesContainer.addEventListener('click', onPicturesClick);
 };
 
-export { initThumbnails };
+export { initThumbnails, removeThumbnails };
