@@ -1,7 +1,7 @@
 import { isEscapeKey, checkStringLength } from './utils.js';
 import { MAX_STRING_LENGTH, MAX_COUNT_HASHTAG, MAX_HASHTAG_LENGTH, MessageError } from './consts.js';
-import { onScaleButtonClick, scaleContainer } from './image-scale.js';
-import { onFilterButtonChange, effectList, sliderWrapper, initEffects } from './effect-filters.js';
+import { initScaleContainer, removeScaleContainer } from './image-scale.js';
+import { sliderWrapper, initEffects, removeEffects, createSlider } from './effect-filters.js';
 import { sendData } from './api.js';
 import { renderMessage } from './messages.js';
 
@@ -24,10 +24,11 @@ const pristine = new Pristine(form, {
 const closeForm  = () => {
   editImg.classList.add('hidden');
   body.classList.remove('modal-open');
-  scaleContainer.removeEventListener('click', onScaleButtonClick);
-  imgPreview.removeAttribute('class');
-  imgPreview.removeAttribute('style');
-  effectList.removeEventListener('change', onFilterButtonChange);
+  removeScaleContainer();
+  removeEffects();
+  imgUploadField.value = '';
+  document.removeEventListener('keydown', onDocumentEscKeydown);
+  closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
 const closeFormWithDefaultSettings  = () => {
@@ -37,28 +38,26 @@ const closeFormWithDefaultSettings  = () => {
   form.reset();
 };
 
-const onButtonEscKeydown = (evt) => {
+function onDocumentEscKeydown(evt) {
   if (isEscapeKey(evt)) {
     closeFormWithDefaultSettings();
-    document.removeEventListener('keydown', onButtonEscKeydown);
   }
-};
+}
 
-const onCloseButtonClick = () => {
+function onCloseButtonClick() {
   closeFormWithDefaultSettings();
-  document.removeEventListener('keydown', onButtonEscKeydown);
-};
+}
 
 const addFieldListeners = (field) => {
   field.addEventListener('focus', () => {
-    document.removeEventListener('keydown', onButtonEscKeydown);
+    document.removeEventListener('keydown', onDocumentEscKeydown);
   });
   field.addEventListener('blur', () => {
-    document.addEventListener('keydown', onButtonEscKeydown);
+    document.addEventListener('keydown', onDocumentEscKeydown);
   });
 };
 
-const buttonAdjustment = () => {
+const adjustButton = () => {
   submitButton.disabled = !pristine.validate();
 };
 
@@ -68,13 +67,13 @@ const onImgUploadFieldchange = () => {
   editImg.classList.remove('hidden');
   body.classList.add('modal-open');
   closeButton.addEventListener('click', onCloseButtonClick);
-  document.addEventListener('keydown',onButtonEscKeydown);
+  document.addEventListener('keydown',onDocumentEscKeydown);
   doActionWithClassHidden();
-  scaleContainer.addEventListener('click', onScaleButtonClick);
-  effectList.addEventListener('change', onFilterButtonChange);
+  initEffects();
+  initScaleContainer();
   addFieldListeners(commentsField);
   addFieldListeners(hashtagsField);
-  buttonAdjustment();
+  adjustButton();
 };
 
 const getUniqueHashtags = (hashtags) => {
@@ -171,12 +170,12 @@ const commentHandler = (string) => {
 const validateForm = () => {
   pristine.addValidator(hashtagsField, hashtagsHandler, error);
   pristine.addValidator(commentsField, commentHandler, error);
-  buttonAdjustment();
+  adjustButton();
 };
 
-const onHashtagInput = () => buttonAdjustment();
+const onHashtagsFieldInput = () => adjustButton();
 
-const onCommentInput = () => buttonAdjustment();
+const onCommentsFieldInput = () => adjustButton();
 
 const setFormSubmit = (onSuccess, onError) => {
   form.addEventListener('submit', (evt) => {
@@ -198,9 +197,9 @@ const setFormSubmit = (onSuccess, onError) => {
 
 const renderUploadForm = () => {
   imgUploadField.addEventListener('change', onImgUploadFieldchange);
-  hashtagsField.addEventListener('input', onHashtagInput);
-  commentsField.addEventListener('input', onCommentInput);
-  initEffects();
+  hashtagsField.addEventListener('input', onHashtagsFieldInput);
+  commentsField.addEventListener('input', onCommentsFieldInput);
+  createSlider();
   validateForm();
   setFormSubmit(closeFormWithDefaultSettings, closeForm);
 };

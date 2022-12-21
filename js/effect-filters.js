@@ -80,7 +80,27 @@ const Effect = {
   }
 };
 
-const initEffects = () => {
+const onEffectListChange = (evt) => {
+  const evtHandler = evt.target.value;
+  if (evtHandler === Effect.none.filter) {
+    sliderWrapper.classList.add('hidden');
+    imgPreview.style.filter = Effect[evtHandler].filter;
+    imgPreview.removeAttribute('class');
+  }
+
+  else {
+    sliderWrapper.classList.remove('hidden');
+    imgPreview.removeAttribute('class');
+    imgPreview.classList.add(`effects__preview--${evtHandler}`);
+    slider.noUiSlider.updateOptions(Effect[evtHandler].options);
+    slider.noUiSlider.on('update', () => {
+      effectValue.value = slider.noUiSlider.get();
+      imgPreview.style.filter = `${Effect[evtHandler].filter}(${effectValue.value}${Effect[evtHandler].units})`;
+    });
+  }
+};
+
+const createSlider = () => {
   noUiSlider.create(slider, {
     range: {
       min: 0,
@@ -101,24 +121,12 @@ const initEffects = () => {
   });
 };
 
-const onFilterButtonChange = (evt) => {
-  const evtHandler = evt.target.value;
-  if (evtHandler === 'none') {
-    sliderWrapper.classList.add('hidden');
-    imgPreview.style.filter = Effect[evtHandler].filter;
-    imgPreview.removeAttribute('class');
-  }
-
-  else {
-    sliderWrapper.classList.remove('hidden');
-    imgPreview.removeAttribute('class');
-    imgPreview.classList.add(`effects__preview--${evtHandler}`);
-    slider.noUiSlider.updateOptions(Effect[evtHandler].options);
-    slider.noUiSlider.on('update', () => {
-      effectValue.value = slider.noUiSlider.get();
-      imgPreview.style.filter = `${Effect[evtHandler].filter}(${effectValue.value}${Effect[evtHandler].units})`;
-    });
-  }
+const initEffects = () => {
+  effectList.addEventListener('change', onEffectListChange);
 };
 
-export { onFilterButtonChange, initEffects, effectList, sliderWrapper };
+const removeEffects = () => {
+  effectList.removeEventListener('change', onEffectListChange);
+};
+
+export { initEffects, removeEffects, sliderWrapper, createSlider };
